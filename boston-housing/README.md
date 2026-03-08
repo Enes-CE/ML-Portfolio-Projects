@@ -90,10 +90,9 @@ Housing price prediction is a fundamental regression problem with real business 
 
 | Model | R² Score |
 |---|---|
-| Linear Regression | ~0.72 |
-| Ridge Regression | ~0.74 |
+| XGBoost | ~0.86 |
 | Random Forest | ~0.87 |
-| **Gradient Boosting** | **~0.91** |
+| **Gradient Boosting** | **~0.88** |
 
 EDA finding translated directly into model performance: log-transforming LSTAT and RM improved R² by ~4 percentage points.
 
