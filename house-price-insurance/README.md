@@ -1,124 +1,142 @@
-# 🏡 House Price Analysis & Insurance Price Prediction
+# 🏠 House Price & Insurance Cost Prediction
 
-> A dual regression study — predicting residential property prices and insurance costs within a single end-to-end ML pipeline.
-
-[![Kaggle](https://img.shields.io/badge/Kaggle-Notebook-blue?logo=kaggle)](https://www.kaggle.com/brahimenesulusoy)
-[![Python](https://img.shields.io/badge/Python-3.x-yellow?logo=python)](https://python.org)
-[![Type](https://img.shields.io/badge/Type-Regression-blue)](https://scikit-learn.org)
+> **A dual-dataset regression study combining King County real estate pricing and medical insurance cost prediction — comparing Linear, Polynomial, SVR, and Decision Tree models.**
 
 ---
 
-## 📌 Problem Statement
+## 📌 Project Overview
 
-Two industries — real estate and insurance — share a common challenge: accurately pricing risk and value from structured tabular data. This project tackles both simultaneously, demonstrating how the same ML pipeline can be adapted across different prediction targets.
+This notebook tackles two related regression problems under one structured ML workflow:
 
----
+1. **King County House Price Prediction** — Predicting residential sale prices using architectural and location features (Washington, 2014–2015)
+2. **Medical Insurance Cost Prediction** — Estimating individual insurance charges based on demographic and health factors
 
-## 🎯 Objectives
-
-- Build separate regression models for house prices and insurance costs
-- Compare feature importance across both domains
-- Demonstrate the full pipeline: raw data → cleaned data → trained model → evaluation
-- Extract interpretable business insights from each model
+Both problems share the same pipeline: EDA → Feature Engineering → Model Comparison → Hyperparameter Tuning.
 
 ---
 
-## 📊 Datasets
+## 🏆 Final Model Results
 
-### 🏠 House Price Dataset
+### King County — House Price Prediction
 
-| Feature | Description |
-|---|---|
-| Area | Property size (sq ft / m²) |
-| Bedrooms | Number of bedrooms |
-| Bathrooms | Number of bathrooms |
-| Floors | Number of storeys |
-| Year Built | Construction year |
-| Condition | Property condition rating |
-| Location | Neighbourhood / region |
-| Price | **Target** — sale price |
+| Model | R² Score |
+|-------|----------|
+| Linear Regression | 0.6959 |
+| Polynomial Regression (Degree 2) | 0.7810 |
+| SVR (Tuned) | 0.6420 |
+| **Decision Tree (Tuned)** | **0.7908 ✅** |
 
-### 🛡️ Insurance Dataset
+> **Best Model: Tuned Decision Tree Regressor** with R² = 0.7908
 
-| Feature | Description |
-|---|---|
-| Age | Policyholder age |
-| Sex | Gender |
-| BMI | Body mass index |
-| Children | Number of dependents |
-| Smoker | Smoking status (Yes/No) |
-| Region | Geographic region |
-| Charges | **Target** — annual insurance cost |
+### Insurance — Charges Prediction
+
+| Model | Metrics |
+|-------|---------|
+| Linear Regression | MSE / MAE / RMSE / R² reported |
+| Polynomial Regression (Degree 2) | MSE / MAE / RMSE / R² reported |
+| SVR (Tuned — GridSearchCV) | MSE / MAE / RMSE / R² reported |
+| Decision Tree (Tuned — GridSearchCV) | R² reported |
+
+> Both datasets use identical evaluation metrics: **MSE, MAE, RMSE, R²**
 
 ---
 
-## 🔍 Key Insights
+## 📂 Datasets
 
-**House Prices:**
-- Area and location are dominant price drivers
-- Property condition has a non-linear effect — "good" vs "excellent" matters less than "poor" vs "fair"
-- Year built affects price mainly through condition proxy
+### 1. King County Housing Data (`kc_house_data.csv`)
+- **21,613 records** | **21 features**
+- Sales between May 2014 – May 2015
 
-**Insurance Costs:**
-- Smoking status is the single most powerful predictor — smokers pay 3–4× more
-- BMI has a threshold effect — high BMI combined with smoking creates extreme charges
-- Age shows steady positive correlation with costs
+| Key Feature | Description |
+|-------------|-------------|
+| `price` | Target — sale price of the house |
+| `bedrooms` / `bathrooms` | Room counts |
+| `sqft_living` | Interior living space (sq ft) |
+| `grade` | Construction quality (1–13 scale) |
+| `yr_built` | Year of construction |
+| `zipcode` | Geographic location |
+
+### 2. Medical Insurance Data
+- Demographic and health features → insurance charge prediction
+- Target: `charges` (annual insurance cost)
 
 ---
 
-## 🛠️ Methodology
+## 🔧 Methodology
 
+### 1. Exploratory Data Analysis
+- Price distribution analysis (right-skewed, $300k–$800k concentration, luxury tail up to $7.7M)
+- Correlation analysis between features and target
+- Categorical and numerical feature profiling
+
+### 2. Feature Engineering
+- Type conversion and unique value analysis
+- Feature extraction from date/time columns
+- Encoding of categorical variables
+
+### 3. Preprocessing
+- **StandardScaler** applied to all features before model training
+- Train/test split for both datasets
+
+### 4. Models & Hyperparameter Tuning
+
+**Linear Regression** — Baseline model
+
+**Polynomial Regression** — Degree sweep to find optimal complexity
 ```
-1. Data Cleaning
-   ├── Missing value imputation
-   ├── Outlier detection and treatment
-   └── Type corrections
-
-2. EDA
-   ├── Distribution plots
-   ├── Correlation analysis
-   └── Categorical feature analysis
-
-3. Feature Engineering
-   ├── Encoding categorical variables
-   ├── Feature scaling
-   └── Log-transformation of skewed targets
-
-4. Modelling (both datasets)
-   ├── Linear Regression (baseline)
-   ├── Random Forest Regressor
-   └── Gradient Boosting Regressor
-
-5. Evaluation
-   └── MAE, RMSE, R² for each model and dataset
+Pipeline: PolynomialFeatures → StandardScaler → LinearRegression
 ```
 
----
+**SVR (Support Vector Regression)** — Tuned via GridSearchCV
 
-## 📈 Results Summary
-
-**House Price Model:** Best R² ~0.88 (Random Forest)  
-**Insurance Cost Model:** Best R² ~0.87 (Gradient Boosting)
-
----
-
-## 🧰 Tech Stack
-
-```python
-pandas · numpy · matplotlib · seaborn
-scikit-learn · scipy
+**Decision Tree Regressor** — Tuned via GridSearchCV
+```
+Grid: criterion, max_depth, min_samples_split, min_samples_leaf
+CV: 5-fold, scoring='r2'
 ```
 
 ---
 
-## 🔗 Full Notebook
+## 📊 Key Findings
 
-👉 [View on Kaggle](https://www.kaggle.com/brahimenesulusoy)
+- **Decision Tree** outperforms all other models on house price prediction (R² = 0.7908)
+- **Polynomial Regression (Degree 2)** is a strong runner-up (R² = 0.7810), capturing non-linear relationships efficiently
+- **SVR** underperforms on this dataset (R² = 0.6420), likely due to the high feature variance and large dataset size
+- Price distribution's heavy right-skew (luxury properties up to $7.7M) reduces linear model accuracy
 
 ---
 
-## 💼 Need a pricing model for your business?
+## 🚀 Future Work
 
-- 🌐 [enesulusoy-portfolio.netlify.app](https://enesulusoy-portfolio.netlify.app)
-- 📧 c.enes.eng@gmail.com
+- Add ensemble methods (Random Forest, Gradient Boosting) for comparison
+- Apply log transformation to the target for better linear model performance
+- Incorporate geospatial features (lat/long clustering) for King County data
+- Explore regularization (Ridge, Lasso) to reduce overfitting in polynomial models
 
+---
+
+## 🛠️ Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikit-learn)
+![Pandas](https://img.shields.io/badge/Pandas-Data-green?logo=pandas)
+![Seaborn](https://img.shields.io/badge/Seaborn-Visualization-9cf)
+
+```
+pandas | numpy | matplotlib | seaborn
+scikit-learn (LinearRegression, PolynomialFeatures, SVR, DecisionTreeRegressor, GridSearchCV)
+```
+
+---
+
+## 📁 File Structure
+
+```
+house-price-insurance/
+│
+└── house-price-analysis-insurance-price-predict.ipynb   # Main analysis notebook
+```
+
+---
+
+*Part of the [ML Portfolio Projects](https://github.com/Enes-CE/ML-Portfolio-Projects) — real-world ML from EDA to production-ready models.*
