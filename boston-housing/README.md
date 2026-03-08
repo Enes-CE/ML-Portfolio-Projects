@@ -1,120 +1,125 @@
-# 🏠 Boston Housing: EDA & Gradient Boosting Mastery
+# 🏙️ Boston Real Estate: Predictive Pricing Analysis
 
-> A deep-dive into one of machine learning's most studied datasets — demonstrating how proper EDA and gradient boosting methods consistently outperform linear baselines.
-
-[![Kaggle](https://img.shields.io/badge/Kaggle-Notebook-blue?logo=kaggle)](https://www.kaggle.com/brahimenesulusoy)
-[![Python](https://img.shields.io/badge/Python-3.x-yellow?logo=python)](https://python.org)
-[![Model](https://img.shields.io/badge/Model-Gradient_Boosting-orange)](https://scikit-learn.org)
+> **Predicting median home values using socio-economic, environmental, and structural features — with a full ML pipeline from EDA to hyperparameter-tuned Gradient Boosting.**
 
 ---
 
-## 📌 Problem Statement
+## 📌 Project Overview
 
-Housing price prediction is a fundamental regression problem with real business value — from real estate agencies to mortgage providers. This project demonstrates a complete ML workflow on the classic Boston Housing dataset, with a focus on EDA depth and model comparison.
+This project applies a structured machine learning workflow to the classic **Boston Housing Dataset** to uncover the key drivers of residential property values in 1970s Boston. Beyond simple price prediction, this analysis serves as a **technical audit of urban real estate valuation** — combining rigorous preprocessing, statistical insight, and ensemble modeling.
+
+**Final Model Performance:**
+| Metric | Score |
+|--------|-------|
+| R² Score | **~0.88** |
+| RMSE | **2.94 ($1000s)** |
+| Best Model | **Tuned Gradient Boosting Regressor** |
 
 ---
 
 ## 🎯 Objectives
 
-- Conduct thorough EDA to understand urban housing price dynamics
-- Identify and interpret the socioeconomic features that drive property values
-- Demonstrate the performance gap between linear models and boosting methods
-- Build an interpretable regression model with actionable feature importance
+- Build a robust regression model to predict **Median Home Value (MEDV)**
+- Identify the primary socio-economic and structural **price drivers**
+- Evaluate **environmental factors** (air pollution, river proximity) on housing demand
+- Mitigate **multicollinearity** and handle **outliers** with principled preprocessing
 
 ---
 
-## 📊 Dataset Features
+## 📂 Dataset
+
+The dataset contains **506 samples** across **13 features** representing census tracts in Boston.
 
 | Feature | Description |
-|---|---|
-| CRIM | Per capita crime rate by town |
-| ZN | Proportion of residential land zoned for large lots |
-| INDUS | Proportion of non-retail business acres |
-| CHAS | Charles River dummy variable (1 if tract bounds river) |
-| NOX | Nitric oxide concentration |
-| RM | Average number of rooms per dwelling |
-| AGE | Proportion of units built before 1940 |
-| DIS | Weighted distance to employment centres |
-| RAD | Accessibility to radial highways |
-| TAX | Property-tax rate |
-| PTRATIO | Pupil-teacher ratio |
-| B | 1000(Bk - 0.63)² — neighbourhood demographics index |
-| LSTAT | % lower status population |
-| MEDV | **Target** — Median home value ($000s) |
+|---------|-------------|
+| `Crime_Rate` | Per capita crime rate by town |
+| `Large_Lot_Zone_Pct` | % of residential land zoned for large lots |
+| `Business_Acres_Pct` | % of non-retail business acres per town |
+| `River_Border` | Charles River adjacency (binary) |
+| `Air_Pollution_Index` | Nitric oxides concentration (ppm × 10) |
+| `Avg_Rooms` | Average number of rooms per dwelling |
+| `Pre_1940_Units_Pct` | % of owner-occupied units built before 1940 |
+| `Dist_Employment_Centers` | Weighted distance to employment hubs |
+| `Highway_Access_Index` | Accessibility to radial highways |
+| `Property_Tax` | Full-value property-tax rate per $10,000 |
+| `Student_Teacher_Ratio` | Pupil-teacher ratio by town |
+| `Social_Index_B` | Racial composition index |
+| `Lower_Income_Pct` | % of population classified as lower-status |
+
+**Target:** `Median_Home_Price` — median value of owner-occupied homes in $1000s
 
 ---
 
-## 🔍 EDA Highlights
+## 🔧 Methodology
 
-- **RM (rooms)**: Strongest positive correlation with price — more rooms = higher value
-- **LSTAT (socioeconomic status)**: Strongest negative correlation — a key price driver
-- **NOX (pollution)**: Higher pollution areas show significantly lower home values
-- **Crime rate**: Non-linear relationship — most towns have low crime, but outliers drag prices down sharply
-- **CHAS (river access)**: Properties bordering the Charles River command a price premium
+### 1. Exploratory Data Analysis
+- Correlation heatmap to identify feature relationships
+- Distribution analysis (box plot, violin plot, histogram with KDE)
+- Scatter plots with regression lines for top predictors
+
+### 2. Feature Engineering & Preprocessing
+- **Log Transformation** applied to target variable and `Lower_Income_Pct` to correct right-skewness
+- **RobustScaler** used to handle outliers (scales by IQR instead of standard deviation)
+- **Multicollinearity Reduction**: `Property_Tax` removed due to 0.91 correlation with `Highway_Access_Index`
+
+### 3. Model Comparison
+Seven models were evaluated on the held-out test set:
+
+| Model | RMSE | MAE | R² |
+|-------|------|-----|----|
+| Linear Regression | — | — | — |
+| Ridge Regression | — | — | — |
+| Lasso Regression | — | — | — |
+| SVR | — | — | — |
+| Random Forest | — | — | — |
+| **Gradient Boosting** | **Best** | **Best** | **~0.88** |
+| XGBoost | — | — | — |
+
+### 4. Hyperparameter Tuning
+Final Gradient Boosting model fine-tuned for optimal bias-variance tradeoff.
 
 ---
 
-## 🛠️ Methodology
+## 📊 Key Findings
+
+- **`Lower_Income_Pct`** and **`Avg_Rooms`** are the dominant price predictors
+- Log-transforming `Lower_Income_Pct` revealed a strong linear relationship with the target
+- The dataset contains **censored values at $50k**, introducing unavoidable noise for high-end predictions
+- Geographic features like `River_Border` have **negligible predictive power**
+
+---
+
+## 🚀 Future Work
+
+- Address the $50,000 upper cap to improve high-value home accuracy
+- Implement **Stacking Ensembles** (XGBoost + Gradient Boosting)
+- Explore SHAP values for deeper model interpretability
+
+---
+
+## 🛠️ Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikit-learn)
+![XGBoost](https://img.shields.io/badge/XGBoost-Boosting-red)
+![Pandas](https://img.shields.io/badge/Pandas-Data-green?logo=pandas)
+![Plotly](https://img.shields.io/badge/Plotly-Visualization-purple?logo=plotly)
 
 ```
-1. Data Overview
-   ├── Null checks, dtypes, statistical summary
-   └── Target variable distribution analysis
-
-2. Univariate EDA
-   ├── Histograms for all 13 features
-   └── Skewness and kurtosis analysis
-
-3. Bivariate EDA
-   ├── Correlation heatmap
-   ├── Scatter plots vs target (MEDV)
-   └── Pairplot for top correlated features
-
-4. Feature Engineering
-   ├── Log transforms for skewed features
-   └── Interaction terms (RM × LSTAT)
-
-5. Modelling
-   ├── Baseline: Linear Regression
-   ├── Ridge / Lasso Regression
-   ├── Random Forest
-   └── Gradient Boosting (best performer)
-
-6. Evaluation
-   └── MAE, MSE, RMSE, R² — compared across all models
+pandas | numpy | matplotlib | seaborn | plotly
+scikit-learn | xgboost
 ```
 
 ---
 
-## 📈 Results
+## 📁 File Structure
 
-| Model | R² Score |
-|---|---|
-| XGBoost | ~0.86 |
-| Random Forest | ~0.87 |
-| **Gradient Boosting** | **~0.88** |
-
-EDA finding translated directly into model performance: log-transforming LSTAT and RM improved R² by ~4 percentage points.
-
----
-
-## 🧰 Tech Stack
-
-```python
-pandas · numpy · matplotlib · seaborn
-scikit-learn · scipy
+```
+boston-housing/
+│
+└── boston-housing-eda-gradient-boosting-mastery.ipynb   # Main analysis notebook
 ```
 
 ---
 
-## 🔗 Full Notebook
-
-👉 [View on Kaggle](https://www.kaggle.com/brahimenesulusoy)
-
----
-
-## 💼 Need a forecasting or regression model?
-
-- 🌐 [enesulusoy-portfolio.netlify.app](https://enesulusoy-portfolio.netlify.app)
-- 📧 c.enes.eng@gmail.com
-
+*Part of the [ML Portfolio Projects](https://github.com/Enes-CE/ML-Portfolio-Projects) — real-world ML from EDA to production-ready models.*
